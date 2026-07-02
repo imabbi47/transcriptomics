@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Test / tooling
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Editor / local config
+.claude/
+.vscode/
+
+# Pipeline data — never commit reads or references
+data/
+*.fastq
+*.fastq.gz
+*.fq.gz
+*.sra
+runs.json
+samplesheet.csv

@@ -1,0 +1,24 @@
+# Conda environment for the ingest stage.
+#   conda env create -f environment.yml
+#   conda activate transcriptomics
+#   pip install -e .
+#
+# The Python code is stdlib-only; these packages provide the external tools the
+# downloader shells out to. (fastp / salmon etc. for later stages are commented
+# out until those modules land.)
+name: transcriptomics
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.9
+  - sra-tools>=3.0      # prefetch, fasterq-dump, fastq-dump (SRA fallback route)
+  - pigz                # parallel gzip
+  - curl                # ENA direct downloads
+  - pip
+  - pip:
+      - rich            # optional: coloured logs
+  # --- later stages -------------------------------------------------
+  # - fastp             # QC + trimming
+  # - salmon            # quasi-mapping / quantification
+  # - multiqc           # aggregated QC report

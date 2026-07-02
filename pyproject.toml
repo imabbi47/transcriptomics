@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "transcriptomics"
+version = "0.1.0"
+description = "Accession-driven RNA-seq preprocessing: fetch SRA/ENA/DDBJ/GEO runs as analysis-ready FASTQ."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Abhi" }]
+keywords = ["RNA-seq", "transcriptomics", "SRA", "GEO", "ENA", "bioinformatics"]
+
+# Core ingest needs no third-party Python packages — only external CLI tools
+# (sra-tools, pigz, curl) which are installed via conda (see environment.yml).
+dependencies = []
+
+[project.optional-dependencies]
+# Nicer coloured logs; entirely optional.
+pretty = ["rich>=13"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+transcriptomics = "transcriptomics.cli:main"
+
+[tool.setuptools]
+packages = ["transcriptomics"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

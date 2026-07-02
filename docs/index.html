@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transcriptomics — RNA-seq from an accession number</title>
+  <style>
+    :root {
+      --bg: #0f172a; --card: #1e293b; --ink: #e2e8f0; --muted: #94a3b8;
+      --accent: #2dd4bf; --accent2: #818cf8; --line: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+    header {
+      text-align: center; padding: 70px 20px 40px;
+      background: radial-gradient(1200px 400px at 50% -120px, #134e4a55, transparent);
+    }
+    header h1 { font-size: 2.6rem; margin: 0 0 .3em; letter-spacing: -.02em; }
+    header h1 .g {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    header p { font-size: 1.2rem; color: var(--muted); margin: 0 auto; max-width: 560px; }
+    section { padding: 34px 0; border-top: 1px solid var(--line); }
+    h2 { font-size: 1.4rem; margin: 0 0 .6em; }
+    p { color: #cbd5e1; }
+    .pills { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .pill {
+      background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+      padding: 8px 16px; font-size: .92rem; white-space: nowrap;
+    }
+    .arrow { color: var(--accent); font-weight: bold; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+    .try input {
+      width: 100%; padding: 13px 15px; border-radius: 10px; border: 1px solid var(--line);
+      background: #0b1220; color: var(--ink); font-size: 1rem; margin-bottom: 12px;
+    }
+    .try button {
+      background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #04201c;
+      border: 0; padding: 12px 22px; border-radius: 10px; font-weight: 700; font-size: 1rem;
+      cursor: pointer;
+    }
+    #msg { margin-top: 14px; color: var(--accent); min-height: 1.4em; font-size: .95rem; }
+    pre {
+      background: #0b1220; border: 1px solid var(--line); border-radius: 12px;
+      padding: 18px; overflow-x: auto; font-size: .9rem;
+    }
+    code { font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+    a { color: var(--accent); }
+    footer { text-align: center; color: var(--muted); padding: 40px 20px; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>🧬 <span class="g">Transcriptomics</span></h1>
+      <p>RNA-seq analysis straight from a GEO/SRA accession number — for any organism.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2>What it does</h2>
+      <p>
+        Give it an accession (<code>GSE…</code>, <code>GSM…</code>, <code>SRR…</code>, <code>SRP…</code>)
+        and it fetches the sequencing data and runs a full RNA-seq workflow — quality control,
+        quantification, differential expression, and functional enrichment — ending in a single report.
+      </p>
+    </section>
+
+    <section>
+      <h2>The pipeline</h2>
+      <div class="pills">
+        <span class="pill">Accession</span><span class="arrow">→</span>
+        <span class="pill">QC + Trim</span><span class="arrow">→</span>
+        <span class="pill">Quantify</span><span class="arrow">→</span>
+        <span class="pill">Diff. Expression</span><span class="arrow">→</span>
+        <span class="pill">Enrichment</span><span class="arrow">→</span>
+        <span class="pill">Report</span>
+      </div>
+    </section>
+
+    <section class="try">
+      <h2>Try it</h2>
+      <div class="card">
+        <input id="acc" type="text" placeholder="Enter an accession, e.g. GSE52778" />
+        <button onclick="run()">Run analysis</button>
+        <div id="msg"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Quick start (command line)</h2>
+      <p>The engine works today from the terminal:</p>
+      <pre><code>conda env create -f environment.yml
+conda activate transcriptomics
+pip install -e .
+
+# fetch a whole GEO series as analysis-ready FASTQ + samplesheet
+transcriptomics fetch GSE52778 -o data</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    Built by Abhi · <a href="https://github.com/imabbi47/transcriptomics">View on GitHub</a>
+  </footer>
+
+  <script>
+    function run() {
+      var acc = document.getElementById('acc').value.trim() || 'your accession';
+      document.getElementById('msg').textContent =
+        '🚧 The web app needs a backend server to run analyses — that’s the next build step. ' +
+        'For now, run "transcriptomics fetch ' + acc + '" from the command line above.';
+    }
+  </script>
+</body>
+</html>
