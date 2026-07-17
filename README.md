@@ -94,8 +94,31 @@ python -m pytest          # or: python -m unittest discover tests
 
 ## Status / roadmap
 
-- [x] Stage 0 — ingest (this module)
-- [ ] Stage 1 — QC + trimming (`fastp`)
-- [ ] Stage 2 — quantification (`salmon`)
-- [ ] Stage 3 — differential expression (`DESeq2`)
-- [ ] Stage 4 — functional enrichment + HTML report
+- [x] Stage 0 — ingest: `fetch` / `resolve` (stdlib core)
+- [ ] Stage 1 — QC + trimming (`fastp`)  ← next
+- [x] Stage 2 — quantification: `quantify` (Salmon)
+- [x] Stage 3 — differential expression: `de` (pyDESeq2)
+- [x] Stage 4 — enrichment: `enrich` (gseapy) + `report` (single-file HTML)
+- [x] helper — `geo-design` (parse a GEO series matrix into a design table)
+
+## Downstream analysis
+
+Needs the heavier stack (`de` / `enrich`); `quantify` / `report` / `geo-design` are stdlib:
+
+```bash
+pip install -e '.[analysis]'
+
+# quantify FASTQ against a Salmon index
+transcriptomics quantify --salmon salmon --index idx --r1 R1.fq.gz --r2 R2.fq.gz --outdir quant
+
+# differential expression from a count matrix + design sheet
+transcriptomics de --counts counts.tsv.gz --design design.csv \
+    --factor treatment --ref Control --alt Treated --covariate "batch,sex" --outdir de
+
+# enrichment, then one self-contained HTML report
+transcriptomics enrich --results de/de_results.csv --outdir de --label "Treated vs Control"
+transcriptomics report --outdir de --title "My study" --out report.html
+```
+
+Validated end-to-end on **GSE334363** (mouse; Sildenafil vs Control → cholesterol/immune signature)
+and **GSE336399** (human; Cancer vs Benign → immune suppression) — see `analysis/`.

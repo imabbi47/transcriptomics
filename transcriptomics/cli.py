@@ -148,6 +148,16 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="transcriptomics",
         description="Fetch SRA/ENA/DDBJ/GEO sequencing runs as analysis-ready FASTQ.",
+        epilog=(
+            "pipeline stages (some need extras: pip install -e '.[analysis]'):\n"
+            "  quantify     Salmon quantification of FASTQ (needs the salmon binary)\n"
+            "  de           differential expression (pyDESeq2)\n"
+            "  enrich       GO / KEGG / Hallmark enrichment (gseapy)\n"
+            "  report       bundle DE + enrichment into one HTML file\n"
+            "  geo-design   parse a GEO series matrix into a design table\n"
+            "run 'transcriptomics <stage> --help' for stage options."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("-v", "--verbose", action="store_true", help="debug logging")
@@ -178,7 +188,31 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+_STAGES = {"quantify": "quantify", "de": "de", "enrich": "enrich",
+           "report": "report", "geo-design": "geo_design"}
+
+
+def _run_stage(stage: str, rest: Sequence[str]) -> int:
+    """Delegate to a pipeline-stage module (lazy import keeps the core dep-free)."""
+    import importlib
+
+    saved = sys.argv
+    sys.argv = [f"transcriptomics {stage}", *rest]
+    try:
+        module = importlib.import_module(f"transcriptomics.{_STAGES[stage]}")
+        return module.main() or 0
+    except ModuleNotFoundError as exc:
+        log.error("stage '%s' needs extra packages (missing: %s). "
+                  "Install with:  pip install -e '.[analysis]'", stage, exc.name)
+        return 1
+    finally:
+        sys.argv = saved
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    raw = list(sys.argv[1:] if argv is None else argv)
+    if raw and raw[0] in _STAGES:
+        return _run_stage(raw[0], raw[1:])
     args = build_parser().parse_args(argv)
     setup_logging(getattr(args, "verbose", False))
     try:
