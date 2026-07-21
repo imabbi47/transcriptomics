@@ -17,8 +17,9 @@ venv/
 .claude/
 .vscode/
 
-# Pipeline data — never commit reads or references
+# Pipeline data / outputs — never commit reads, references, or results
 data/
+results/
 *.fastq
 *.fastq.gz
 *.fq.gz
