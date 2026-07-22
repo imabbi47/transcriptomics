@@ -155,6 +155,7 @@ def build_parser() -> argparse.ArgumentParser:
             "  enrich       GO / KEGG / Hallmark enrichment (gseapy)\n"
             "  report       bundle DE + enrichment into one HTML file\n"
             "  geo-design   parse a GEO series matrix into a design table\n"
+            "  serve        launch the web app (needs: pip install -e '.[web]')\n"
             "run 'transcriptomics <stage> --help' for stage options."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -209,8 +210,29 @@ def _run_stage(stage: str, rest: Sequence[str]) -> int:
         sys.argv = saved
 
 
+def _serve(rest: Sequence[str]) -> int:
+    """Launch the FastAPI web app (needs the [web] extra)."""
+    import argparse as _ap
+
+    parser = _ap.ArgumentParser(prog="transcriptomics serve")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--reload", action="store_true")
+    opts = parser.parse_args(list(rest))
+    try:
+        import uvicorn
+    except ModuleNotFoundError:
+        log.error("web extra not installed — run:  pip install -e '.[web]'")
+        return 1
+    log.info("Serving the transcriptomics web app at http://%s:%d  (Ctrl-C to stop)", opts.host, opts.port)
+    uvicorn.run("transcriptomics.webapp:app", host=opts.host, port=opts.port, reload=opts.reload)
+    return 0
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     raw = list(sys.argv[1:] if argv is None else argv)
+    if raw and raw[0] == "serve":
+        return _serve(raw[1:])
     if raw and raw[0] in _STAGES:
         return _run_stage(raw[0], raw[1:])
     args = build_parser().parse_args(argv)

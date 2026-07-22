@@ -39,8 +39,13 @@ def parse(path):
             sources = split_row(line)
         elif line.startswith("!Sample_characteristics_ch1"):
             vals = split_row(line)
+            keys_seen = {v.split(":", 1)[0].strip().lower() for v in vals if ":" in v}
             key = vals[0].split(":")[0].strip() if vals and ":" in vals[0] else f"char{ci}"
             key = re.sub(r"\s+", "_", key.lower())
+            if len(keys_seen) > 1:
+                print(f"[geo] WARNING: characteristics row {ci:02d} mixes keys across samples "
+                      f"{sorted(keys_seen)} -> column '{ci:02d}_{key}' may be mislabelled; "
+                      "verify the design before running DE")
             chars[f"{ci:02d}_{key}"] = [v.split(":", 1)[1].strip() if ":" in v else v for v in vals]
             ci += 1
     return titles, gsms, sources, chars

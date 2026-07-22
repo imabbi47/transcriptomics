@@ -29,6 +29,8 @@ analysis = [
     "scikit-learn>=1.4",
     "mygene>=3.2",
 ]
+# Web backend: FastAPI service + job runner behind the site.
+web = ["fastapi>=0.110", "uvicorn[standard]>=0.29"]
 dev = ["pytest>=7"]
 
 [project.scripts]

@@ -23,9 +23,13 @@ import pandas as pd
 def load_counts(path):
     """Read a genes x samples table -> samples x genes integer DataFrame."""
     df = pd.read_csv(path, sep="\t", index_col=0)
-    df = df.apply(pd.to_numeric, errors="coerce").dropna(how="all").fillna(0)
-    counts = df.T
-    counts = counts.round(0).astype(int)
+    numeric = df.apply(pd.to_numeric, errors="coerce")
+    coerced = int(numeric.isna().sum().sum() - df.isna().sum().sum())
+    if coerced:
+        print(f"[de] WARNING: {coerced} non-numeric count value(s) coerced to 0 — "
+              "check the matrix for stray text columns/rows before trusting results")
+    df = numeric.dropna(how="all").fillna(0)
+    counts = df.T.round(0).astype(int)
     counts.index = [str(i) for i in counts.index]
     return counts
 
@@ -173,6 +177,15 @@ def main():
     print(f"[de] {args.factor}: {meta[args.factor].value_counts().to_dict()}")
     for cv in covariates:
         print(f"[de] {cv}: {meta[cv].value_counts().to_dict()}")
+
+    factor_levels = set(meta[args.factor].astype(str))
+    missing = [x for x in (args.ref, args.alt) if x not in factor_levels]
+    if missing:
+        raise SystemExit(f"[de] --ref/--alt {missing} not found in '{args.factor}' "
+                         f"(levels present: {sorted(factor_levels)})")
+    if not common:
+        raise SystemExit("[de] no samples shared between the count matrix and the design "
+                         "— check that the design 'sample' column matches the count columns")
 
     keep = counts.sum(axis=0) >= 10
     counts = counts.loc[:, keep]
