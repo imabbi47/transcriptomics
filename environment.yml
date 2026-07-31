@@ -18,7 +18,10 @@ dependencies:
   - pip
   - pip:
       - rich            # optional: coloured logs
+  - hisat2              # splice-aware aligner (align stage)
+  - subread             # featureCounts gene counting (align stage)
+  - samtools            # BAM utilities
   # --- later stages -------------------------------------------------
   # - fastp             # QC + trimming
-  # - salmon            # quasi-mapping / quantification
+  # - salmon            # quasi-mapping / quantification (quantify stage)
   # - multiqc           # aggregated QC report

@@ -150,7 +150,8 @@ def build_parser() -> argparse.ArgumentParser:
         description="Fetch SRA/ENA/DDBJ/GEO sequencing runs as analysis-ready FASTQ.",
         epilog=(
             "pipeline stages (some need extras: pip install -e '.[analysis]'):\n"
-            "  quantify     Salmon quantification of FASTQ (needs the salmon binary)\n"
+            "  quantify     Salmon quasi-mapping of FASTQ (alignment-free; needs salmon)\n"
+            "  align        HISAT2/STAR alignment -> featureCounts (alignment-based counts)\n"
             "  de           differential expression (pyDESeq2)\n"
             "  enrich       GO / KEGG / Hallmark enrichment (gseapy)\n"
             "  report       bundle DE + enrichment into one HTML file\n"
@@ -189,7 +190,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-_STAGES = {"quantify": "quantify", "de": "de", "enrich": "enrich",
+_STAGES = {"quantify": "quantify", "align": "align", "de": "de", "enrich": "enrich",
            "report": "report", "geo-design": "geo_design"}
 
 

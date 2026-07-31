@@ -96,7 +96,7 @@ python -m pytest          # or: python -m unittest discover tests
 
 - [x] Stage 0 — ingest: `fetch` / `resolve` (stdlib core)
 - [ ] Stage 1 — QC + trimming (`fastp`)  ← next
-- [x] Stage 2 — quantification: `quantify` (Salmon)
+- [x] Stage 2 — quantification: `quantify` (Salmon, alignment-free) **or** `align` (HISAT2/STAR → featureCounts, alignment-based)
 - [x] Stage 3 — differential expression: `de` (pyDESeq2)
 - [x] Stage 4 — enrichment: `enrich` (gseapy) + `report` (single-file HTML)
 - [x] helper — `geo-design` (parse a GEO series matrix into a design table)
