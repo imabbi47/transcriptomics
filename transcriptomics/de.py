@@ -112,7 +112,7 @@ def pca_plot(dds, meta, args):
     ax.set_xlabel("PC1"), ax.set_ylabel("PC2")
     ax.set_title("PCA (top variable genes)")
     fig.tight_layout()
-    fig.savefig(os.path.join(args.outdir, "pca.png"), dpi=130)
+    fig.savefig(os.path.join(args.outdir, "pca.png"), dpi=getattr(args, "dpi", 130))
     plt.close(fig)
 
 
@@ -131,7 +131,7 @@ def volcano_plot(res, args):
     ax.set_ylabel("-log10 adjusted p")
     ax.set_title("Volcano")
     fig.tight_layout()
-    fig.savefig(os.path.join(args.outdir, "volcano.png"), dpi=130)
+    fig.savefig(os.path.join(args.outdir, "volcano.png"), dpi=getattr(args, "dpi", 130))
     plt.close(fig)
 
 
@@ -148,7 +148,7 @@ def ma_plot(res, args):
     ax.set_ylabel("log2 fold-change")
     ax.set_title("MA plot")
     fig.tight_layout()
-    fig.savefig(os.path.join(args.outdir, "ma.png"), dpi=130)
+    fig.savefig(os.path.join(args.outdir, "ma.png"), dpi=getattr(args, "dpi", 130))
     plt.close(fig)
 
 
@@ -162,6 +162,7 @@ def main():
     ap.add_argument("--covariate", default=None)
     ap.add_argument("--outdir", default="results")
     ap.add_argument("--alpha", type=float, default=0.05)
+    ap.add_argument("--dpi", type=int, default=130, help="figure resolution (use 300 for hi-res/print)")
     args = ap.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
 
