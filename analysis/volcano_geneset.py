@@ -22,6 +22,7 @@ def main():
     ap.add_argument("--lfc", type=float, default=1.0)
     ap.add_argument("--nlabel", type=int, default=12)
     ap.add_argument("--ymax", type=float, default=0.0, help="y-axis cap; 0 = auto from gene set")
+    ap.add_argument("--dpi", type=int, default=150, help="output resolution (300 for print/hi-res)")
     args = ap.parse_args()
 
     gset = {ln.strip().upper() for ln in open(args.genes) if ln.strip()}
@@ -62,7 +63,7 @@ def main():
     ax.text(.02, .98, f"gene set: {len(st)} found · {len(sig)} significant",
             transform=ax.transAxes, va="top", fontsize=8, color="#333")
     fig.tight_layout()
-    fig.savefig(args.out, dpi=150)
+    fig.savefig(args.out, dpi=args.dpi)
     print(f"[volcano] {args.out}  (set={len(st)}, sig up={len(up)}, down={len(dn)})")
 
 

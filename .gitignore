@@ -26,3 +26,14 @@ results/
 *.sra
 runs.json
 samplesheet.csv
+
+# cilia_aml large intermediates (not versioned)
+cilia_aml/data/fastq/
+cilia_aml/data/sra/
+cilia_aml/data/quant/
+cilia_aml/data/ref/
+cilia_aml/data/tmp/
+cilia_aml/data/sratoolkit*/
+cilia_aml/data/*.sra
+cilia_aml/data/*.sra.aria2
+cilia_aml/data/*.nohup.log
